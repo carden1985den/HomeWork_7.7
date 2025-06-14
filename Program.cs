@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using HomeWork_7._7;
+using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 
 abstract class Courier
@@ -58,7 +59,7 @@ enum ProductType
 {
     food = 0,
     clothes,
-    chemicals,
+    chemical,
     petProduct,
     other
 }
@@ -68,17 +69,24 @@ class ProductCollection
     public int productCount;
     public float productWeight;
     public ProductType productType;
+
 }
+    
+class SearchOrderCollection
+{    
+    private Order collection;
+    private string productName;
 
-class OrderCollectionSearch
-{
-    private static Order[] _collectionProducts;
-    static void Search(Order[] collectionProducts)
+    public SearchOrderCollection(Order order)
     {
-        _collectionProducts = collectionProducts;
+        collection = order;
+    }
 
-        foreach (var item in _collectionProducts) {
-            item;
+    public static void GetAllProduct(Order collection)
+    {
+        foreach (var item in collection.productCollection)
+        {
+            Console.WriteLine(item.productName);
         }
     }
 
@@ -86,36 +94,44 @@ class OrderCollectionSearch
     //поиск по элементам заказа
         get
         {
-            for (int i = 0; i < _collectionProducts.Length; i++)
+            for (int i = 0; i < collection.productCollection.Length; i++)
             {
-                if (_collectionProducts[i]._productName == searchProductName)
+                if (collection.productCollection[i].productName == searchProductName)
                 {
-                    
+                    Console.WriteLine(collection.productCollection[i].productName);
                 }
             }
-        }
-        set
-        {
-
-        }
+            return null;
+        }   
     }
-
 }
+
 class Order
 {
     private int _orderNumber;
+    private string _orderRecipientName;
     private string _orderRecipientPhoneNumber;
     private string _orderRecipientAddress;
-    private ProductCollection[] _productCollection;
-    public Order(ref int orderNumber, string orderRecipientPhoneNumber, string orderRecipientAddress, ProductCollection[] productCollection )
+    public ProductCollection[] productCollection;
+    public Order(ref int orderNumber, string orderRecipientName, string orderRecipientPhoneNumber, string orderRecipientAddress, ProductCollection[] productCollection )
     {
+        _orderRecipientName = orderRecipientName;
         _orderRecipientPhoneNumber = orderRecipientPhoneNumber;
         _orderRecipientAddress = orderRecipientAddress;
-        _productCollection = productCollection;
+        this.productCollection = productCollection;
         
+
         //Присваиваем номер заказу
         orderNumber++;
         _orderNumber = orderNumber;
+    }
+
+    public void DisplayOrderProduct()
+    {
+        foreach (var item in productCollection)
+        {
+            Console.WriteLine(item.productName);
+        }
     }
 }
 
@@ -130,12 +146,26 @@ class Order
 
 class Programm
 {
-    
     static void Main()
     {
         int orderNumber = 0;
-        ProductCollection[] productCollection = new ProductCollection[] { productCount = 0 };
 
-        Order order = new Order(ref orderNumber, "+7 912 741 82 78", "Ижевск", productCollection);
+        Order order1 = new Order(ref orderNumber, "Денис", "+7 912 741 82 78", "Ижевск", 
+            new ProductCollection[] {
+                new ProductCollection { productName = "Хлеб", productCount = 1, productType = ProductType.food},
+                new ProductCollection { productName = "Колбаса", productCount = 2, productType = ProductType.food }
+            }
+        );
+        Order order2 = new Order(ref orderNumber, "Екатерина", "+7 912 874 40 24", "Можга",
+            new ProductCollection[] {
+                new ProductCollection { productName = "Средство для чистки ванн", productCount = 5, productType = ProductType.chemical},
+                new ProductCollection { productName = "Рубашка", productCount = 1, productType = ProductType.clothes }
+            }
+        );
+
+
+        SearchOrderCollection.GetAllProduct(order2);
+        SearchOrderCollection collection = new SearchOrderCollection(order1);
+        Order findOrderProduct = collection["Хлеб"];
     }
 }
