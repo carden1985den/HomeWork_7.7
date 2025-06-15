@@ -6,7 +6,7 @@ class Courier
 {
     bool isOrderDelivered = false;
     private Order _order;
-        public Courier(Order order)
+    public Courier(Order order)
     {
         _order = order;
         GetOrder();
@@ -19,7 +19,7 @@ class Courier
     }
     private void MoveOrder() 
     {
-        Console.WriteLine("Курьер доставляет заказ {0} по адресу: {1} {2}", _order.orderNumber, _order.orderRecipientAddress, (Delivery) _order.deliveryPoint);
+        Console.WriteLine("Курьер доставляет заказ {0} по адресу {1}, тип доставки {2}", _order.orderNumber, _order.orderRecipientAddress, (Delivery) _order.deliveryPoint);
     }
     private void PlaceOrder()
     {
@@ -43,7 +43,6 @@ abstract class Delivery
 class HomeDelivery : Delivery
 {
     //public string deliveredTo = "Домой";
-    
 }
 
 class PickPointDelivery : Delivery
@@ -74,12 +73,12 @@ class ProductCollection
     
 class SearchOrderCollection
 {    
-    private Order collection;
-    private string productName;
+    private Order _collection;
+    //private string productName;
 
     public SearchOrderCollection(Order order)
     {
-        collection = order;
+        _collection = order;
     }
 
     public static void GetAllProduct(Order collection)
@@ -94,11 +93,11 @@ class SearchOrderCollection
     //поиск по элементам заказа
         get
         {
-            for (int i = 0; i < collection.productCollection.Length; i++)
+            for (int i = 0; i < _collection.productCollection.Length; i++)
             {
-                if (collection.productCollection[i].productName == searchProductName)
+                if (_collection.productCollection[i].productName == searchProductName)
                 {
-                    Console.WriteLine(collection.productCollection[i].productName);
+                    Console.WriteLine(_collection.productCollection[i].productName);
                 }
             }
             return null;
@@ -110,7 +109,7 @@ class Order
 {
     public int orderNumber;
     public string orderRecipientName;
-    private string _orderRecipientPhoneNumber;
+    public string orderRecipientPhoneNumber;
     public string orderRecipientAddress;
     public Delivery deliveryPoint;
     public ProductCollection[] productCollection;
@@ -118,7 +117,7 @@ class Order
     public Order(ref int orderNumber, string orderRecipientName, string orderRecipientPhoneNumber, string orderRecipientAddress, string deliveryPoint, ProductCollection[] productCollection )
     {
         this.orderRecipientName = orderRecipientName;
-        this._orderRecipientPhoneNumber = orderRecipientPhoneNumber;
+        this.orderRecipientPhoneNumber = orderRecipientPhoneNumber;
         this.orderRecipientAddress = orderRecipientAddress;
         this.productCollection = productCollection;
 
@@ -150,7 +149,7 @@ class Order
     {
         Console.WriteLine(orderNumber);
         Console.WriteLine(orderRecipientName);
-        Console.WriteLine(_orderRecipientPhoneNumber);
+        Console.WriteLine(orderRecipientPhoneNumber);
         Console.WriteLine(orderRecipientAddress);
         
         foreach (var item in productCollection)
