@@ -5,26 +5,38 @@ using System.Security.Cryptography.X509Certificates;
 
 abstract class Courier
 {
-    public static void GetOrder() { }
-    public static void MoveOrder() { }
-    public static void PlaceOrder() { }
-
-
+    public void GetOrder()
+    {
+        Console.WriteLine("Курьер взял заказ");
+    }
+    abstract public void MoveOrder();
+    public void PlaceOrder() {
+        Console.WriteLine("Курьер взял заказ");
+    }
 }
 
 class FootCourier : Courier
 {
-    
+    override public void MoveOrder()
+    {
+        Console.WriteLine("Пеший курьер доставляет заказ на дом");
+    }
 }
 
 class BikeCourier : Courier
 {
-
+    override public void MoveOrder()
+    {
+        Console.WriteLine("Курьер на велосипеде доставляет заказ в пункт выдачи");
+    }
 }
 
 class CarCourier : Courier
 {
-
+    override public void MoveOrder()
+    {
+        Console.WriteLine("Курьер на машине доставляет заказ в пункт магазин");
+    }
 }
 
 enum DeliveryPoint
@@ -44,7 +56,7 @@ class HomeDelivery : Delivery
 {
     public HomeDelivery(Courier courier)
     {
-
+        courier.GetOrder();
     }
     //public string deliveredTo = "Домой";
 }
@@ -53,7 +65,7 @@ class PickPointDelivery : Delivery
 {
     public PickPointDelivery(Courier courier)
     {
-
+        courier.GetOrder();
     }
     //public string deliveredTo = "ПВЗ";
 }
@@ -61,8 +73,8 @@ class PickPointDelivery : Delivery
 class ShopDelivery : Delivery
 {
     public ShopDelivery(Courier courier) 
-    { 
-    
+    {
+        courier.GetOrder();
     }
     //public string deliveredTo = "Магазин";
 }
@@ -179,7 +191,7 @@ class Order
         ProductCollection[] _col2 = order2.ProductCollection;
         var _col3 = _col1.Concat(_col2).ToArray();
 
-        return new Order(order1.OrderNumber, order1.OrderRecipientName, order1.OrderRecipientPhoneNumber, order1.OrderRecipientAddress, "", _col3);
+        return new Order(order1.OrderNumber, order1.OrderRecipientName, order1.OrderRecipientPhoneNumber, order1.OrderRecipientAddress, order1.DeliveryPoint, _col3);
     }
 }
 
