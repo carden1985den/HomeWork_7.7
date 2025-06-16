@@ -20,7 +20,7 @@ class Courier
     }
     private void MoveOrder() 
     {
-        Console.WriteLine("Курьер доставляет заказ {0} по адресу {1}, тип доставки {2}", _Order.OrderNumber, _Order.OrderRecipientAddress, (Delivery) _Order.DeliveryPoint);
+        Console.WriteLine("Курьер доставляет заказ {0} по адресу {1}, тип доставки {2}", _Order.OrderNumber, _Order.OrderRecipientAddress);
     }
     private void PlaceOrder()
     {
@@ -106,17 +106,51 @@ class SearchOrderCollection
     }
 }
 
+class CombainOrder
+{
+    public int OrderNumber {  get; set; }
+    public string OrderRecipientName {  get; set; }
+    public string OrderRecipientPhoneNumber {  get; set; }
+    public string OrderRecipientAddress {  get; set; }
+    public DeliveryPoint DeliveryPoint {  get; set; }
+    public ProductCollection[] ProductCollection { get; }
+    //ref int orderNumber, string orderRecipientName, string orderRecipientPhoneNumber,
+    //string orderRecipientAddress, DeliveryPoint deliveryPoint,
+    //ProductCollection[] productCollection
+    public CombainOrder(Order order1, Order order2)
+    {
+        if (order1.OrderRecipientPhoneNumber != order2.OrderRecipientPhoneNumber)
+        {
+            Console.WriteLine("Не возможно объеденить заказ, не совпадают номера телефонов в заказе");
+            return;
+        }
+
+        OrderNumber = order1.OrderNumber;
+        OrderRecipientName = order1.OrderRecipientName;
+        OrderRecipientPhoneNumber = order1.OrderRecipientPhoneNumber;
+        OrderRecipientAddress = order1.OrderRecipientAddress;
+        
+    }
+}
+
 class Order
 {
     public int OrderNumber { get; set; }
     public string OrderRecipientName { get; set; }
     public string OrderRecipientPhoneNumber { get; set; }
     public string OrderRecipientAddress {  get; set; }
-    public DeliveryPoint DeliveryPoint {  get; set; }
+    //public DeliveryPoint DeliveryPoint {  get; set; }
     public ProductCollection[] ProductCollection {  get; set; }
+    
+    public Order(Order order1, Order order2)
+    {
 
+    }
+    
     public Order(ref int orderNumber, string orderRecipientName, string orderRecipientPhoneNumber, string orderRecipientAddress, DeliveryPoint deliveryPoint, ProductCollection[] productCollection )
     {
+        DeliveryPoint DeliveryPoint;
+
         this.OrderRecipientName = orderRecipientName;
         this.OrderRecipientPhoneNumber = orderRecipientPhoneNumber;
         this.OrderRecipientAddress = orderRecipientAddress;
@@ -157,6 +191,11 @@ class Order
         {
             Console.WriteLine(item.ProductName);
         }
+    }
+
+    public static Order operator + (Order order1, Order order2)
+    {
+        
     }
 }
 
