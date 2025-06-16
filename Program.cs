@@ -1,31 +1,30 @@
 ﻿using HomeWork_7._7;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 
-class Courier
+abstract class Courier
 {
-    bool isOrderDelivered = false;
-    private Order _Order {  get; set; }
+    public static void GetOrder() { }
+    public static void MoveOrder() { }
+    public static void PlaceOrder() { }
+
+
+}
+
+class FootCourier : Courier
+{
     
-    public Courier(Order order)
-    {
-        _Order = order;
-        GetOrder();
-        MoveOrder();
-        PlaceOrder();
-    }
-    private void GetOrder()
-    {
-        Console.WriteLine("Курьер получил заказ номер: {0}", _Order.OrderNumber);
-    }
-    private void MoveOrder() 
-    {
-        Console.WriteLine("Курьер доставляет заказ {0} по адресу {1}, тип доставки {2}", _Order.OrderNumber, _Order.OrderRecipientAddress);
-    }
-    private void PlaceOrder()
-    {
-        Console.WriteLine("Курьер доставил заказ {0} по адресу {1} и вручмл получател {2}", _Order.OrderNumber, _Order.OrderRecipientAddress, _Order.OrderRecipientName);
-    }
+}
+
+class BikeCourier : Courier
+{
+
+}
+
+class CarCourier : Courier
+{
+
 }
 
 enum DeliveryPoint
@@ -43,16 +42,28 @@ abstract class Delivery
 
 class HomeDelivery : Delivery
 {
+    public HomeDelivery(Courier courier)
+    {
+
+    }
     //public string deliveredTo = "Домой";
 }
 
 class PickPointDelivery : Delivery
 {
+    public PickPointDelivery(Courier courier)
+    {
+
+    }
     //public string deliveredTo = "ПВЗ";
 }
 
 class ShopDelivery : Delivery
 {
+    public ShopDelivery(Courier courier) 
+    { 
+    
+    }
     //public string deliveredTo = "Магазин";
 }
 
@@ -73,13 +84,13 @@ class ProductCollection
 }
     
 class SearchOrderCollection
-{    
-    private Order _Collection {  get; set; }
+{
+    private Order _collection;
     //private string productName;
 
     public SearchOrderCollection(Order order)
     {
-        _Collection = order;
+        _collection = order;
     }
 
     public static void GetAllProduct(Order collection)
@@ -94,11 +105,11 @@ class SearchOrderCollection
     //поиск по элементам заказа
         get
         {
-            for (int i = 0; i < _Collection.ProductCollection.Length; i++)
+            for (int i = 0; i < _collection.ProductCollection.Length; i++)
             {
-                if (_Collection.ProductCollection[i].ProductName == searchProductName)
+                if (_collection.ProductCollection[i].ProductName == searchProductName)
                 {
-                    Console.WriteLine(_Collection.ProductCollection[i].ProductName);
+                    Console.WriteLine("Указанный продукт {0}, присутствует в заказе",_collection.ProductCollection[i].ProductName);
                 }
             }
             return null;
@@ -106,77 +117,45 @@ class SearchOrderCollection
     }
 }
 
-class CombainOrder
-{
-    public int OrderNumber {  get; set; }
-    public string OrderRecipientName {  get; set; }
-    public string OrderRecipientPhoneNumber {  get; set; }
-    public string OrderRecipientAddress {  get; set; }
-    public DeliveryPoint DeliveryPoint {  get; set; }
-    public ProductCollection[] ProductCollection1 { get; }
-    public ProductCollection[] ProductCollection2 { get; }
-    //ref int orderNumber, string orderRecipientName, string orderRecipientPhoneNumber,
-    //string orderRecipientAddress, DeliveryPoint deliveryPoint,
-    //ProductCollection[] productCollection
-    /*public CombainOrder(Order order1, Order order2)
-    {
-        if (order1.OrderRecipientPhoneNumber != order2.OrderRecipientPhoneNumber)
-        {
-            Console.WriteLine("Не возможно объеденить заказ, не совпадают номера телефонов в заказе");
-            return;
-        }
-
-        OrderNumber = order1.OrderNumber;
-        OrderRecipientName = order1.OrderRecipientName;
-        OrderRecipientPhoneNumber = order1.OrderRecipientPhoneNumber;
-        OrderRecipientAddress = order1.OrderRecipientAddress;
-        ProductCollection1
-
-
-
-    }*/
-
-    
-}
-
 class Order
 {
-    public int OrderNumber { get; set; }
-    public string OrderRecipientName { get; set; }
-    public string OrderRecipientPhoneNumber { get; set; }
-    public string OrderRecipientAddress {  get; set; }
-    //public DeliveryPoint DeliveryPoint {  get; set; }
+    public int OrderNumber { get; }
+    public string OrderRecipientName { get; }
+    public string OrderRecipientPhoneNumber { get; }
+    public string OrderRecipientAddress {  get; }
+    public Delivery DeliveryType {  get; set; }
+    public DeliveryPoint DeliveryPoint { get; set; }
     public ProductCollection[] ProductCollection {  get; set; }
-    
-    public Order(ref int orderNumber, string orderRecipientName, string orderRecipientPhoneNumber, string orderRecipientAddress, DeliveryPoint deliveryPoint, ProductCollection[] productCollection )
+    public Order(int OrderNumber, string orderRecipientName, string orderRecipientPhoneNumber, string orderRecipientAddress, DeliveryPoint deliveryPoint, ProductCollection[] productCollection )
     {
-        DeliveryPoint DeliveryPoint;
-
+        this.DeliveryPoint = DeliveryPoint;
+        this.OrderNumber = OrderNumber;
         this.OrderRecipientName = orderRecipientName;
         this.OrderRecipientPhoneNumber = orderRecipientPhoneNumber;
         this.OrderRecipientAddress = orderRecipientAddress;
         this.ProductCollection = productCollection;
-
+        //this.DeliveryType = deliveryPoint;
         //Присваиваем номер заказу
-        orderNumber++;
-        this.OrderNumber = orderNumber;
-
         switch (deliveryPoint)
         {
             case DeliveryPoint.Home:
-                Delivery HomeDelivery = new HomeDelivery();
-                HomeDelivery.deliveredTo = deliveryPoint;
-                //this.DeliveryPoint = deliveryPoint;
+                Courier footCourier = new FootCourier();
+
+                Delivery HomeDelivery = new HomeDelivery(footCourier);
+                this.DeliveryType = HomeDelivery;
+
                 break;
             case DeliveryPoint.PickPoint:
-                Delivery PickPointDelivery = new PickPointDelivery();
-                PickPointDelivery.deliveredTo = deliveryPoint;
-                //this.DeliveryPoint = deliveryPoint;
+                Courier bikeCourier = new FootCourier();
+
+                Delivery PickPointDelivery = new PickPointDelivery(bikeCourier);
+                this.DeliveryType = PickPointDelivery;
                 break;
             case DeliveryPoint.Shop:
-                Delivery ShopDelivery = new ShopDelivery();
-                ShopDelivery.deliveredTo = deliveryPoint;
-                //this.DeliveryPoint = deliveryPoint;
+                Courier carCourier = new FootCourier();
+
+                Delivery ShopDelivery = new ShopDelivery(carCourier);
+                this.DeliveryType =  ShopDelivery;
                 break;
         }
     }
@@ -196,24 +175,26 @@ class Order
 
     public static Order operator +(Order order1, Order order2)
     {
-        return new Order(order1.OrderNumber, );
+        ProductCollection[] _col1 = order1.ProductCollection;
+        ProductCollection[] _col2 = order2.ProductCollection;
+        var _col3 = _col1.Concat(_col2).ToArray();
+
+        return new Order(order1.OrderNumber, order1.OrderRecipientName, order1.OrderRecipientPhoneNumber, order1.OrderRecipientAddress, "", _col3);
     }
 }
 
 class Programm
 {
-    static void Main()
-    {
-        int orderNumber = 0;
-
-        Order order1 = new Order(ref orderNumber, "Денис", "+7 912 741 82 78", "Ижевск", DeliveryPoint.Shop,
+     static void Main()
+    {   
+        Order order1 = new Order(1, "Денис", "+7 912 741 82 78", "Ижевск", DeliveryPoint.Shop,
             new ProductCollection[] {
                 new ProductCollection { ProductName = "Хлеб", ProductCount = 1, ProductType = ProductType.Food},
                 new ProductCollection { ProductName = "Колбаса", ProductCount = 2, ProductType = ProductType.Food }
             }
         );
 
-        Order order2 = new Order(ref orderNumber, "Екатерина", "+7 912 874 40 24", "Можга", DeliveryPoint.Home,
+        Order order2 = new Order(2, "Екатерина", "+7 912 874 40 24", "Можга", DeliveryPoint.Home,
             new ProductCollection[] {
                 new ProductCollection { ProductName = "Средство для чистки ванн", ProductCount = 5, ProductType = ProductType.Chemical},
                 new ProductCollection { ProductName = "Рубашка", ProductCount = 1, ProductType = ProductType.Clothes }
@@ -231,9 +212,11 @@ class Programm
         SearchOrderCollection collection = new SearchOrderCollection(order1);
         Order findOrderProduct = collection["Хлеб"];
 
-        foreach ( var item in orderList)
-        {
-            Courier courier = new Courier(item);
-        }
+        
+        //Прегрузка оператора
+        Order order3 = order1 + order2;
+        order3.DisplayOrder();
+
+        
     }
 }
