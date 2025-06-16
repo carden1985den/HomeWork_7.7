@@ -113,11 +113,12 @@ class CombainOrder
     public string OrderRecipientPhoneNumber {  get; set; }
     public string OrderRecipientAddress {  get; set; }
     public DeliveryPoint DeliveryPoint {  get; set; }
-    public ProductCollection[] ProductCollection { get; }
+    public ProductCollection[] ProductCollection1 { get; }
+    public ProductCollection[] ProductCollection2 { get; }
     //ref int orderNumber, string orderRecipientName, string orderRecipientPhoneNumber,
     //string orderRecipientAddress, DeliveryPoint deliveryPoint,
     //ProductCollection[] productCollection
-    public CombainOrder(Order order1, Order order2)
+    /*public CombainOrder(Order order1, Order order2)
     {
         if (order1.OrderRecipientPhoneNumber != order2.OrderRecipientPhoneNumber)
         {
@@ -129,8 +130,13 @@ class CombainOrder
         OrderRecipientName = order1.OrderRecipientName;
         OrderRecipientPhoneNumber = order1.OrderRecipientPhoneNumber;
         OrderRecipientAddress = order1.OrderRecipientAddress;
-        
-    }
+        ProductCollection1
+
+
+
+    }*/
+
+    
 }
 
 class Order
@@ -141,11 +147,6 @@ class Order
     public string OrderRecipientAddress {  get; set; }
     //public DeliveryPoint DeliveryPoint {  get; set; }
     public ProductCollection[] ProductCollection {  get; set; }
-    
-    public Order(Order order1, Order order2)
-    {
-
-    }
     
     public Order(ref int orderNumber, string orderRecipientName, string orderRecipientPhoneNumber, string orderRecipientAddress, DeliveryPoint deliveryPoint, ProductCollection[] productCollection )
     {
@@ -193,9 +194,9 @@ class Order
         }
     }
 
-    public static Order operator + (Order order1, Order order2)
+    public static Order operator +(Order order1, Order order2)
     {
-        
+        return new Order(order1.OrderNumber, );
     }
 }
 
