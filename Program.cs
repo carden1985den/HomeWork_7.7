@@ -266,5 +266,6 @@ class Programm
         //Прегрузка оператора
         Order order3 = order1 + order2;
         order3.DisplayOrder();
+        order1.DisplayOrder();
     }
 }
