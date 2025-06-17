@@ -5,37 +5,59 @@ using System.Security.Cryptography.X509Certificates;
 
 abstract class Courier
 {
-    public void GetOrder()
-    {
-        Console.WriteLine("Курьер взял заказ");
-    }
+    abstract public void GetOrder(int orderNumber);
     abstract public void MoveOrder();
-    public void PlaceOrder() {
-        Console.WriteLine("Курьер взял заказ");
-    }
+    abstract public void PlaceOrder();
 }
 
 class FootCourier : Courier
 {
+    override public void GetOrder(int orderNumber)
+    {
+        Console.WriteLine("Курьер взял заказ ({0})", orderNumber);
+    }
     override public void MoveOrder()
     {
         Console.WriteLine("Пеший курьер доставляет заказ на дом");
+    }
+
+    override public void PlaceOrder()
+    {
+        Console.WriteLine("Курьер оставил заказ");
     }
 }
 
 class BikeCourier : Courier
 {
+    override public void GetOrder(int orderNumber)
+    {
+        Console.WriteLine("Курьер взял заказ ({0})", orderNumber);
+    }
     override public void MoveOrder()
     {
-        Console.WriteLine("Курьер на велосипеде доставляет заказ в пункт выдачи");
+        Console.WriteLine("Курьер на велосипеде доставит заказ в пункт выдочи");
+    }
+
+    override public void PlaceOrder()
+    {
+        Console.WriteLine("Курьер оставил заказ");
     }
 }
 
 class CarCourier : Courier
 {
+    override public void GetOrder(int orderNumber)
+    {
+        Console.WriteLine("Курьер взял заказ ({0})", orderNumber);
+    }
     override public void MoveOrder()
     {
-        Console.WriteLine("Курьер на машине доставляет заказ в пункт магазин");
+        Console.WriteLine("Курьер на машине доставляет заказ в магазин");
+    }
+
+    override public void PlaceOrder()
+    {
+        Console.WriteLine("Курьер оставил заказ");
     }
 }
 
@@ -48,35 +70,52 @@ enum DeliveryPoint
 
 abstract class Delivery
 {
-    public DeliveryPoint deliveredTo;
-    //public abstract void CourierType();
+    abstract public void Deliver(Courier courier);
 }
 
 class HomeDelivery : Delivery
 {
-    public HomeDelivery(Courier courier)
+    private Order _order;
+    public HomeDelivery(Order order)
     {
-        courier.GetOrder();
+        _order = order;
     }
-    //public string deliveredTo = "Домой";
+    override public void Deliver(Courier courier)
+    {
+        courier.GetOrder(_order.OrderNumber);
+        courier.MoveOrder();
+        courier.PlaceOrder();
+    }
 }
 
 class PickPointDelivery : Delivery
 {
-    public PickPointDelivery(Courier courier)
+    private Order _order;
+    public PickPointDelivery(Order order)
     {
-        courier.GetOrder();
+        _order = order;
     }
-    //public string deliveredTo = "ПВЗ";
+    override public void Deliver(Courier courier)
+    {
+        courier.GetOrder(_order.OrderNumber);
+        courier.MoveOrder();
+        courier.PlaceOrder();
+    }
 }
 
 class ShopDelivery : Delivery
 {
-    public ShopDelivery(Courier courier) 
+    private Order _order;
+    public ShopDelivery(Order order)
     {
-        courier.GetOrder();
+        _order = order;
     }
-    //public string deliveredTo = "Магазин";
+    override public void Deliver(Courier courier)
+    {
+        courier.GetOrder(_order.OrderNumber);
+        courier.MoveOrder();
+        courier.PlaceOrder();
+    }
 }
 
 enum ProductType
@@ -98,30 +137,30 @@ class ProductCollection
 class SearchOrderCollection
 {
     private Order _collection;
-    //private string productName;
-
     public SearchOrderCollection(Order order)
     {
         _collection = order;
     }
-
-    public static void GetAllProduct(Order collection)
+    public static void GetAllProductsInOrder(Order collection)
     {
+        int count = 1;
+        Console.WriteLine("\nПросмотр продуктов в заказе ({0}):", collection.OrderNumber);
         foreach (var item in collection.ProductCollection)
         {
-            Console.WriteLine(item.ProductName);
+            Console.WriteLine("{0} {1}",count ,item.ProductName);
+            count++;
         }
     }
-
     public Order this[string searchProductName] {
     //поиск по элементам заказа
         get
         {
+            Console.WriteLine("\nПоиск продукта ({1}) в заказе ({0}):", _collection.OrderNumber, searchProductName);
             for (int i = 0; i < _collection.ProductCollection.Length; i++)
             {
                 if (_collection.ProductCollection[i].ProductName == searchProductName)
                 {
-                    Console.WriteLine("Указанный продукт {0}, присутствует в заказе",_collection.ProductCollection[i].ProductName);
+                    Console.WriteLine("Указанный продукт ({0}), присутствует в заказе",_collection.ProductCollection[i].ProductName);
                 }
             }
             return null;
@@ -131,54 +170,31 @@ class SearchOrderCollection
 
 class Order
 {
-    public int OrderNumber { get; }
-    public string OrderRecipientName { get; }
-    public string OrderRecipientPhoneNumber { get; }
-    public string OrderRecipientAddress {  get; }
-    public Delivery DeliveryType {  get; set; }
+    public int OrderNumber { get; set; }
+    public string OrderRecipientName { get; set; }
+    public string OrderRecipientPhoneNumber { get; set; }
+    public string OrderRecipientAddress {  get; set; }
     public DeliveryPoint DeliveryPoint { get; set; }
     public ProductCollection[] ProductCollection {  get; set; }
     public Order(int OrderNumber, string orderRecipientName, string orderRecipientPhoneNumber, string orderRecipientAddress, DeliveryPoint deliveryPoint, ProductCollection[] productCollection )
     {
-        this.DeliveryPoint = DeliveryPoint;
+        this.DeliveryPoint = deliveryPoint;
         this.OrderNumber = OrderNumber;
         this.OrderRecipientName = orderRecipientName;
         this.OrderRecipientPhoneNumber = orderRecipientPhoneNumber;
         this.OrderRecipientAddress = orderRecipientAddress;
         this.ProductCollection = productCollection;
-        //this.DeliveryType = deliveryPoint;
-        //Присваиваем номер заказу
-        switch (deliveryPoint)
-        {
-            case DeliveryPoint.Home:
-                Courier footCourier = new FootCourier();
-
-                Delivery HomeDelivery = new HomeDelivery(footCourier);
-                this.DeliveryType = HomeDelivery;
-
-                break;
-            case DeliveryPoint.PickPoint:
-                Courier bikeCourier = new FootCourier();
-
-                Delivery PickPointDelivery = new PickPointDelivery(bikeCourier);
-                this.DeliveryType = PickPointDelivery;
-                break;
-            case DeliveryPoint.Shop:
-                Courier carCourier = new FootCourier();
-
-                Delivery ShopDelivery = new ShopDelivery(carCourier);
-                this.DeliveryType =  ShopDelivery;
-                break;
-        }
     }
 
     public void DisplayOrder()
     {
-        Console.WriteLine(OrderNumber);
-        Console.WriteLine(OrderRecipientName);
-        Console.WriteLine(OrderRecipientPhoneNumber);
-        Console.WriteLine(OrderRecipientAddress);
-        
+        Console.WriteLine("\nИнформация о заказе ({0})", OrderNumber);
+        Console.WriteLine("Номер заказа: ({0})", OrderNumber);
+        Console.WriteLine("Имя получателя: ({0})", OrderRecipientName);
+        Console.WriteLine("Номер телефона получателя: ({0})", OrderRecipientPhoneNumber);
+        Console.WriteLine("Адрес получателя: ({0})", OrderRecipientAddress);
+
+        Console.WriteLine("\nПродукты добавленные в заказ:");
         foreach (var item in ProductCollection)
         {
             Console.WriteLine(item.ProductName);
@@ -216,19 +232,39 @@ class Programm
         List<Order> orderList = new List<Order>();
         orderList.Add(order1);
         orderList.Add(order2);
+        
+        //перебираем список заказов
+        foreach ( Order order in orderList)
+        {
+            switch (order.DeliveryPoint)
+            {
+                case DeliveryPoint.Home:
+                    Courier footCourier = new FootCourier();
+                    Delivery HomeDelivery = new HomeDelivery(order);
+                    HomeDelivery.Deliver(footCourier);
+                    break;
+                case DeliveryPoint.PickPoint:
+                    Courier bikeCourier = new BikeCourier();
+                    Delivery PickPointDelivery = new PickPointDelivery(order);
+                    PickPointDelivery.Deliver(bikeCourier);
+                    break;
+                case DeliveryPoint.Shop:
+                    Courier carCourier = new CarCourier();
+                    Delivery ShopDelivery = new ShopDelivery(order);
+                    ShopDelivery.Deliver(carCourier);
+                    break;
+            }
+        }
 
         //Статичный метод
-        SearchOrderCollection.GetAllProduct(order2);
+        SearchOrderCollection.GetAllProductsInOrder(order1);
 
         //Индексатор
         SearchOrderCollection collection = new SearchOrderCollection(order1);
         Order findOrderProduct = collection["Хлеб"];
 
-        
         //Прегрузка оператора
         Order order3 = order1 + order2;
         order3.DisplayOrder();
-
-        
     }
 }
